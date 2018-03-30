@@ -31,7 +31,13 @@ public abstract class AbstractFailureAnalyzer<T extends Throwable>
 
 	@Override
 	public FailureAnalysis analyze(Throwable failure) {
-		T cause = findCause(failure, getCauseType());
+		Class<? extends T> causeType;
+		try {
+			causeType = getCauseType();
+		} catch	(TypeNotPresentException e) {
+			return null;
+		}
+		T cause = findCause(failure, causeType);
 		if (cause != null) {
 			return analyze(failure, cause);
 		}
